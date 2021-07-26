@@ -20,7 +20,7 @@ async def youtube_download(link: str):
             logging.info('Tayyor!')
 
     ydl_opts = {
-        'format': '[filesize<100M]',
+        'format': '[filesize<50M]',
         'progress_hook': [progress_hook],
         'outtmpl': f'{config.tg_bot.yt_path}%(extractor)s-%(id)s-%(title)s.%(ext)s',
     }
