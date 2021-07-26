@@ -4,6 +4,7 @@ import os
 from aiogram import Dispatcher
 from aiogram import types
 from aiogram.types import InputFile
+from youtube_dl import DownloadError
 
 from tgbot.config import load_config
 from tgbot.services.funcs import find_url, youtube_download
@@ -18,18 +19,21 @@ async def user_text(message: types.Message):
     text = message.text
     is_url = await find_url(text)
     video_title = ''
-    if is_url:
-        link = is_url[0]
-        video = await youtube_download(link)
-        logging.info(video)
-        keyword = video
-        for fname in os.listdir(config.tg_bot.yt_path):
-            if keyword in fname:
-                video_title = fname
-    if video_title:
-        logging.info(video_title)
-        await message.bot.send_video(message.chat.id, InputFile(f'{config.tg_bot.yt_path}{video_title}'),
-                                     caption=f'@{config.tg_bot.bot_username}')
+    try:
+        if is_url:
+            link = is_url[0]
+            video = await youtube_download(link)
+            logging.info(video)
+            keyword = video
+            for fname in os.listdir(config.tg_bot.yt_path):
+                if keyword in fname:
+                    video_title = fname
+        if video_title:
+            logging.info(video_title)
+            await message.bot.send_video(message.chat.id, InputFile(f'{config.tg_bot.yt_path}{video_title}'),
+                                         caption=f'@{config.tg_bot.bot_username}')
+    except DownloadError:
+            await message.reply('Video hajmi 50MB dan katta ekan 😔')
 
 
 def register_user(dp: Dispatcher):
