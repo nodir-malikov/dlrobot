@@ -14,8 +14,12 @@ class DbConfig:
 @dataclass
 class TgBot:
     token: str
-    admin_ids: list[int]
+    bot_name: str
+    bot_username: str
+    admin_ids: int
     use_redis: bool
+    debug: bool
+    yt_path: str
 
 
 @dataclass
@@ -37,8 +41,12 @@ def load_config(path: str = None):
     return Config(
         tg_bot=TgBot(
             token=env.str("BOT_TOKEN"),
-            admin_ids=list(map(int, env.list("ADMINS"))),
+            bot_name=env.str("BOT_NAME"),
+            bot_username=env.str("BOT_USERNAME"),
+            admin_ids=env.list("ADMINS"),
             use_redis=env.bool("USE_REDIS"),
+            debug=env.bool("DEBUG"),
+            yt_path=env.str("YT_PATH")
         ),
         db=DbConfig(
             host=env.str('DB_HOST'),
